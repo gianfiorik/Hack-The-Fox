@@ -1,14 +1,10 @@
 #!/bin/bash
-# Detiene los 4 servicios de reto levantados por setup.sh
-
-if [ -f .pids/servers.pid ]; then
-    while read -r pid; do
-        if kill "$pid" 2>/dev/null; then
-            echo "[+] Detenido PID $pid"
-        fi
-    done < .pids/servers.pid
-    rm -f .pids/servers.pid
-    echo "Listo."
-else
-    echo "No hay servidores registrados (¿ya corriste ./setup.sh?)."
-fi
+# Apaga los servidores y limpia todo lo creado por las partes.
+cd "$(dirname "$0")" || exit 1
+for n in 2 3; do
+  f=".run/reto$n.pid"
+  [ -f "$f" ] && kill "$(cat "$f")" 2>/dev/null && echo "parte $n detenida"
+  rm -f "$f"
+done
+rm -rf "$HOME/ctf_oficina" "$HOME/ctf_parte4" "$HOME/ctf_parte5"
+echo "Listo."
