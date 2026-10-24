@@ -1,35 +1,56 @@
-# Mini CTF HTF — "Primera Sangre"
+# Semana 2 — Python aplicado a Seguridad + Git
 
-5 partes, flags con formato `HTF{...}`. Todo corre en TU propia VM (nada sale a la red).
-El instructor te asigna una parte (o varias): ejecuta **solo** el script de la tuya.
+**Hack The Fox — UCB**
 
-## Preparar
+## Estructura
 
-```bash
-unzip mini_ctf_estudiantes.zip
-cd mini_ctf
-bash parteN.sh      # cambia N por tu parte, ejemplo: bash parte3.sh
+```
+semana2-ctf/
+├── setup.sh                 # verifica python3/requests/git, levanta los 4 retos
+├── stop.sh                  # detiene los 4 retos
+├── git_cheatsheet.md         # material del segmento de Git (viernes, 5-10 min)
+├── challenges/
+│   ├── 01_banner_grab/       # socket TCP, sin interacción (warm-up)
+│   ├── 02_auth_socket/       # socket TCP, con interacción (send/recv)
+│   ├── 03_http_json/         # requests.get() + parseo de JSON
+│   └── 04_http_chained_auth/ # login -> token -> flag (requests encadenado)
+└── solutions/                 # SOLO instructor, no se comparte ni se sube a git
 ```
 
-> No pegues scripts en la terminal: ejecútalos como archivo (`bash parte3.sh`).
+Cada carpeta en `challenges/` tiene:
+- `server.py` — el servicio del reto (ya corre solo, no hay que tocarlo)
+- `client_template.py` — el esqueleto que los estudiantes completan
+- `README.md` — objetivo, pistas, cómo probar
 
-Para apagar todo y limpiar al terminar: `bash stop.sh`
+## Viernes (virtual, 20:00) — preparación
 
-## Partes
+1. Recap rápido de semana 1 (permisos, SUID, procesos, portscan).
+2. Concepto: sockets en Python (`connect`, `send`, `recv`).
+3. Concepto: `requests` — GET, POST, JSON, headers.
+4. Git en 5-10 min (`git_cheatsheet.md`).
+5. Setup del ambiente: cada estudiante corre `./setup.sh` en su máquina y
+   confirma que los 4 puertos (9001-9004) responden.
 
-| Parte | Reto | Cómo lo preparas | Dónde lo resuelves | Pts |
-|---|---|---|---|---|
-| 1 | Archivo fantasma | `bash parte1.sh` | carpeta `~/ctf_oficina` | 50 |
-| 2 | El portero matemático | `bash parte2.sh` | `nc 127.0.0.1 9101` (plantilla en `retos/2_portero/`) | 100 |
-| 3 | Panel del club | `bash parte3.sh` | http://127.0.0.1:9102 en el navegador de tu VM | 100 |
-| 4 | Mensaje en dos capas | `bash parte4.sh` | `~/ctf_parte4/mensaje.txt` | 100 |
-| 5 | Foto sospechosa | `bash parte5.sh` | `~/ctf_parte5/foto.jpg` | 100 |
+## Sábado (presencial, 12:15) — CTF hands-on
 
-`bash setup.sh` prepara las 5 partes de una vez (solo para quien las haga todas).
+Los 4 retos ya están corriendo (si no, `./setup.sh` los levanta). Los
+estudiantes completan los `client_template.py` de cada uno, en orden de
+dificultad creciente, y reportan la flag capturada.
 
-## Reglas
+| Reto | Puerto | Skill principal |
+|---|---|---|
+| 01_banner_grab | 9001 | socket connect + recv |
+| 02_auth_socket | 9002 | socket send + recv (interacción) |
+| 03_http_json | 9003 | requests.get() + parseo de dict/JSON |
+| 04_http_chained_auth | 9004 | requests.post() + headers + flujo encadenado |
 
-- Equipos de 3 o 4 personas.
-- **Regla de honor:** no abras `servidor.py`, `app.py` ni los `parte*.sh` hasta que termine el CTF.
-- Cada pista usada resta 10 puntos.
-- Si algo falla: `bash stop.sh` y luego vuelve a ejecutar tu `parteN.sh`.
+Al terminar cada reto, commitear el `client_template.py` resuelto (renombrado
+o no, a criterio del estudiante) al repo del club.
+
+## Notas para el instructor
+
+- `solutions/soluciones.py` tiene las 4 soluciones de referencia — no compartir.
+- Los servers son stdlib puro (`socket`, `http.server`) para no depender de
+  Flask ni nada externo del lado del servidor; solo el cliente necesita `requests`.
+- Recordatorio de siempre: **nunca pegar scripts multilínea directo en zsh
+  interactivo** — guardarlos con `nano` y ejecutarlos como archivo.
